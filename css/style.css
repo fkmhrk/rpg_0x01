@@ -43,7 +43,8 @@
   position: fixed;
   bottom: 0;
   left: 0;
-  right: 0; }
+  right: 0;
+  margin: 8px auto; }
   .mazeScene .buttons button {
     min-height: 44px;
     min-width: 44px; }
