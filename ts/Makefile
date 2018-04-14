@@ -1,0 +1,6 @@
+app.js: *.ts
+	tsc -target es2015 app.ts -out app.js
+	cp app.js ../js/app.js
+	
+style.css: ../css/style.scss
+	sass ../css/style.scss
