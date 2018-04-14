@@ -1,5 +1,6 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../maze/MazeScene.ts"/>
 
 class SetupScene implements Scene {
     app: Application;
@@ -21,6 +22,17 @@ class SetupScene implements Scene {
                     }
                 }
             });
+            this.ractive.on({
+                submit: () => {
+                    this.submit();
+                }
+            });
         });
+    }
+
+    private submit() {
+        let name = this.ractive.get('name');
+        this.app.initParty(name);
+        this.app.showScene(new MazeScene(this.app));
     }
 }

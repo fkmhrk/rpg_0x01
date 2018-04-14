@@ -7,7 +7,7 @@
 <body>
     <section id="c"></section>
 
-    <div id="titleTemplate" type="text/ractive" style="display: none;">
+    <div id="titleTemplate" style="display: none;">
         <section class="titleScene">
             <h1>RPG 0x01</h1>
 
@@ -23,7 +23,7 @@
         </section>
     </div>
 
-    <div id="setupTemplate" type="text/ractive" style="display: none;">
+    <div id="setupTemplate" style="display: none;">
         <section class="setupScene">
             <h1>Input your name</h1>
 
@@ -37,6 +37,19 @@
             
         </section>
     </div>    
+
+    <div id="mazeTemplate" style="display: none;">
+        <section class="mazeScene">
+            <canvas id="maze" width="320" height="320"></canvas>
+            <section class="buttons">
+                <table class="move">
+                    <tr><td></td><td><button>Go</button></td><td></td></tr>
+                    <tr><td><button>Left</button></td><td></td><td><button>Right</button></td></tr>
+                    <tr><td></td><td><button>Back</button></td><td></td></tr>
+                </table>
+            </section>
+        </section>
+    </div>        
 
     <link rel="stylesheet" type="text/css" href="./css/style.css"/>
     <script src="./js/ractive.js"></script>

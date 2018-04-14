@@ -1,7 +1,7 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
 /// <reference path="../setup/SetupScene.ts"/>
-
+/// <reference path="../maze/MazeScene.ts"/>
 
 class TitleScene implements Scene {
     app: Application;
@@ -20,8 +20,15 @@ class TitleScene implements Scene {
             this.ractive.on({
                 start: () => {
                     this.app.showScene(new SetupScene(this.app));
+                },
+                resume: () => {
+                    this.resume();
                 }
             });
         });
+    }
+
+    private resume() {
+        this.app.showScene(new MazeScene(this.app));
     }
 }

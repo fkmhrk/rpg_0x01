@@ -32,3 +32,18 @@
     padding: 4px 16px;
     height: 44px;
     margin-top: 16px; }
+
+.mazeScene canvas {
+  display: block;
+  width: 320px;
+  height: 320px;
+  margin: 8px auto; }
+.mazeScene .buttons {
+  width: 320px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0; }
+  .mazeScene .buttons button {
+    min-height: 44px;
+    min-width: 44px; }
