@@ -51,6 +51,29 @@
         </section>
     </div>        
 
+    <div id="battleTemplate" style="display: none;">
+        <section class="battleScene">
+            <section class="background">
+                <section class="enemyImages">
+                    <img/>
+                </section>
+            </section>
+
+            <pre class="msg">Enemy appeared</pre>
+
+            <section class="buttons">
+                {{#if buttonState == 1}}
+                <button class="ok" on-click="ok">OK</button>
+                {{elseif buttonState == 2}}
+                <div class="commands">
+                    <button>Fight</button>
+                    <button on-click="run">Run</button>
+                </div>
+                {{/if}}
+            </section>
+        </section>
+    </div>
+
     <link rel="stylesheet" type="text/css" href="./css/style.css"/>
     <script src="./js/ractive.js"></script>
     <script src="./js/app.js"></script>

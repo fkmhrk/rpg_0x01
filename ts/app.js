@@ -3,6 +3,7 @@ class Party {
         this.x = 0;
         this.y = 0;
         this.direction = 0;
+        this.encounter = 1;
     }
     goForward() {
         switch (this.direction) {
@@ -196,8 +197,63 @@ class Application {
         return this.maze.getWalls(this.party.x, this.party.y, this.party.direction);
     }
 }
+const STATE_PARTY_COMMAND = 1;
+class BattleEngine {
+    constructor(callback) {
+        this.callback = callback;
+        this.state = STATE_PARTY_COMMAND;
+    }
+    doNext() {
+        switch (this.state) {
+            case STATE_PARTY_COMMAND:
+                this.callback.showPartyCommand();
+                break;
+        }
+    }
+    run() {
+        // TODO: to roll dice
+        this.callback.didRun();
+    }
+}
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../maze/MazeScene.ts"/>
+/// <reference path="./BattleEngine.ts"/>
+class BattleScene {
+    constructor(app) {
+        this.app = app;
+        this.engine = new BattleEngine(this);
+    }
+    onCreate() {
+        this.app.getTemplate('battleTemplate').then((t) => {
+            this.ractive = new Ractive({
+                el: '#c',
+                template: t,
+                data: {
+                    buttonState: 1,
+                }
+            });
+            this.ractive.on({
+                ok: () => {
+                    this.engine.doNext();
+                },
+                run: () => {
+                    this.engine.run();
+                }
+            });
+        });
+    }
+    showPartyCommand() {
+        this.ractive.set('buttonState', 2);
+    }
+    didRun() {
+        //TODO update party
+        this.app.showScene(new MazeScene(this.app));
+    }
+}
+/// <reference path="../Scene.ts"/>
+/// <reference path="../../Application.ts"/>
+/// <reference path="../battle/BattleScene.ts"/>
 class MazeScene {
     constructor(app) {
         this.app = app;
@@ -243,6 +299,11 @@ class MazeScene {
         this.app.party.goForward();
         this.showActionText('Go');
         this.drawMaze();
+        this.app.party.encounter--;
+        if (this.app.party.encounter <= 0) {
+            this.app.party.encounter = Math.random() * 10 + 3;
+            this.app.showScene(new BattleScene(this.app));
+        }
     }
     showActionText(text) {
         this.actionText = text;

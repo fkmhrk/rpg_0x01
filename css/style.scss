@@ -67,3 +67,56 @@
         }
     }
 }
+
+.battleScene {
+    .background {
+        position: fixed;
+        width: 320px;
+        height: 320px;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 8px auto;
+        background-color: black; 
+    }
+    .msg {
+        position: fixed;
+        background-color: black;
+        border: 2px solid white;
+        color: white;
+        width: 304px;
+        top: 0;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        font-size: 16px;
+    }
+    .enemyImages {
+        display: flex;
+        justify-content: space-around;
+        margin-top: 136px;
+        img {
+            width: 48px;
+            height: 48px;
+        }
+    }
+    .buttons {
+        position: fixed;
+        width: 320px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 8px auto;
+        button {
+            height: 44px;
+        }
+        .ok {
+            width: 320px;
+        }
+        .commands {
+            display: flex;
+            justify-content: space-around;
+        }
+    }
+    
+}

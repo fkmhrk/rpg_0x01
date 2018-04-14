@@ -1,5 +1,6 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../battle/BattleScene.ts"/>
 
 class MazeScene implements Scene {
     app: Application;
@@ -56,6 +57,12 @@ class MazeScene implements Scene {
         this.app.party.goForward();
         this.showActionText('Go');
         this.drawMaze();
+
+        this.app.party.encounter--;
+        if (this.app.party.encounter <= 0) {
+            this.app.party.encounter = Math.random() * 10 + 3;
+            this.app.showScene(new BattleScene(this.app));
+        }        
     }
 
     private showActionText(text: string) {

@@ -2,11 +2,13 @@ class Party {
     x: number;
     y: number;
     direction: number;
+    encounter: number;
 
     init(name: string) {
         this.x = 0;
         this.y = 0;
         this.direction = 0;
+        this.encounter = 1;
     }
 
     goForward() {

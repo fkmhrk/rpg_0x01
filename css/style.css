@@ -48,3 +48,45 @@
   .mazeScene .buttons button {
     width: 44px;
     height: 44px; }
+
+.battleScene .background {
+  position: fixed;
+  width: 320px;
+  height: 320px;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 8px auto;
+  background-color: black; }
+.battleScene .msg {
+  position: fixed;
+  background-color: black;
+  border: 2px solid white;
+  color: white;
+  width: 304px;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  font-size: 16px; }
+.battleScene .enemyImages {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 136px; }
+  .battleScene .enemyImages img {
+    width: 48px;
+    height: 48px; }
+.battleScene .buttons {
+  position: fixed;
+  width: 320px;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: 8px auto; }
+  .battleScene .buttons button {
+    height: 44px; }
+  .battleScene .buttons .ok {
+    width: 320px; }
+  .battleScene .buttons .commands {
+    display: flex;
+    justify-content: space-around; }
