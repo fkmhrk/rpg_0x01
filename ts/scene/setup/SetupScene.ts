@@ -1,9 +1,7 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
-/// <reference path="../setup/SetupScene.ts"/>
 
-
-class TitleScene implements Scene {
+class SetupScene implements Scene {
     app: Application;
     ractive: Ractive.Ractive;
 
@@ -12,14 +10,15 @@ class TitleScene implements Scene {
     }  
 
     onCreate() {
-        this.app.getTemplate('titleTemplate').then((t : string) => {
+        this.app.getTemplate('setupTemplate').then((t : string) => {
             this.ractive = new Ractive({
                 el: '#c',
                 template: t,
-            });
-            this.ractive.on({
-                start: () => {
-                    this.app.showScene(new SetupScene(this.app));
+                data: {
+                    name: "",
+                    isEmpty: (v: string) => {
+                        return v.length == 0;
+                    }
                 }
             });
         });

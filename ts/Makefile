@@ -1,4 +1,4 @@
-app.js: *.ts
+app.js: *.ts **/*.ts **/**/*.ts
 	tsc -target es2015 app.ts -out app.js
 	cp app.js ../js/app.js
 	

@@ -10,4 +10,9 @@ class Application {
     getTemplate(name: string) : Promise<String> {
         return Promise.resolve(document.getElementById(name).innerHTML);
     }
+
+    showScene(nextScene: Scene) {
+        this.scene = nextScene;
+        this.scene.onCreate();
+    }
 }
