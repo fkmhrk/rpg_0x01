@@ -55,18 +55,31 @@
         <section class="battleScene">
             <section class="background">
                 <section class="enemyImages">
+                    {{#enemies}}
+                    {{#if .alive == true}}
                     <img/>
+                    {{/if}}
+                    {{/}}
                 </section>
             </section>
 
-            <pre class="msg">Enemy appeared</pre>
+            <pre class="msg">{{msg}}</pre>
 
             <section class="buttons">
+                {{#if p != null}}
+                <table class="state">
+                    <tr>
+                        <th class="name">{{p.name}}</th>
+                        <td>HP 0x{{p.hp.toString(16)}}</td>
+                        <td>MP 0x{{p.mp.toString(16)}}</td>
+                    </tr>
+                </table>
+                {{/if}}
                 {{#if buttonState == 1}}
                 <button class="ok" on-click="ok">OK</button>
                 {{elseif buttonState == 2}}
                 <div class="commands">
-                    <button>Fight</button>
+                    <button on-click="fight">Fight</button>
                     <button on-click="run">Run</button>
                 </div>
                 {{/if}}

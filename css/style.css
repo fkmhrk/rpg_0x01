@@ -68,7 +68,8 @@
   left: 0;
   right: 0;
   margin: 0 auto;
-  font-size: 16px; }
+  font-size: 16px;
+  white-space: pre-wrap; }
 .battleScene .enemyImages {
   display: flex;
   justify-content: space-around;
@@ -83,6 +84,14 @@
   left: 0;
   right: 0;
   margin: 8px auto; }
+  .battleScene .buttons .state {
+    width: 300px;
+    background-color: black;
+    color: white;
+    border: 2px solid white;
+    margin: 0 auto; }
+    .battleScene .buttons .state .name {
+      text-align: left; }
   .battleScene .buttons button {
     height: 44px; }
   .battleScene .buttons .ok {

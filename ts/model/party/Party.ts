@@ -1,14 +1,48 @@
+/// <reference path="./Character.ts" />
+
 class Party {
     x: number;
     y: number;
     direction: number;
     encounter: number;
 
+    characters: Character[];
+    gold: number;
+
     init(name: string) {
         this.x = 0;
         this.y = 0;
         this.direction = 0;
         this.encounter = 1;
+        this.gold = 20;
+
+        let c = new Character();
+        c.name = name;
+        c.hp = 16;
+        c.maxHp = 16;
+        c.mp = 0;
+        c.maxMp = 0;
+        c.attack = 6;
+        c.defence = 0;
+        c.xp = 0;
+        c.nextXp = 2;
+        this.characters = [ c ];
+    }
+
+    copy(): Party {
+        let p = new Party();
+        p.characters = [];
+        this.characters.forEach((c: Character) => {
+            p.characters.push(c.copy());
+        })
+        return p;
+    }
+
+    update(p: Party) {
+        this.characters.forEach((c: Character, index: number) => {
+            let src = p.characters[index];
+            c.update(src);
+        })
     }
 
     goForward() {
@@ -45,4 +79,13 @@ class Party {
             case 3: this.direction = 0; break;
         }
     }    
+
+    addBattleResult(xp: number, gold: number) {
+        this.characters.forEach((c: Character) => {
+            if (c.hp > 0) {
+                c.xp += xp;
+            }
+        });
+        this.gold += gold;
+    }
 }

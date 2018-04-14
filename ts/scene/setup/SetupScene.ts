@@ -16,7 +16,7 @@ class SetupScene implements Scene {
                 el: '#c',
                 template: t,
                 data: {
-                    name: "",
+                    name: "0x01",
                     isEmpty: (v: string) => {
                         return v.length == 0;
                     }

@@ -1,9 +1,90 @@
+class Character {
+    constructor() {
+        this.level = 1;
+        this.xp = 0;
+        this.nextXp = 0;
+    }
+    addHp(value) {
+        this.hp += value;
+        if (this.hp < 0) {
+            this.hp = 0;
+        }
+        else if (this.hp >= this.maxHp) {
+            this.hp = this.maxHp;
+        }
+    }
+    copy() {
+        let c = new Character();
+        c.level = this.level;
+        c.name = this.name;
+        c.hp = this.hp;
+        c.maxHp = this.maxHp;
+        c.mp = this.mp;
+        c.maxMp = this.maxMp;
+        c.attack = this.attack;
+        c.defence = this.defence;
+        c.xp = this.xp;
+        c.nextXp = this.nextXp;
+        return c;
+    }
+    update(c) {
+        this.level = c.level;
+        this.hp = c.hp;
+        this.maxHp = c.maxHp;
+        this.mp = c.mp;
+        this.maxMp = c.maxMp;
+        this.attack = c.attack;
+        this.defence = c.defence;
+        this.xp = c.xp;
+        this.nextXp = c.nextXp;
+    }
+    levelUp() {
+        ++this.level;
+        this.nextXp = this.level * this.level * 10;
+        this.hp += 1;
+        this.maxHp += 1;
+        this.mp += 1;
+        this.maxMp += 1;
+        this.attack += 1;
+        this.defence += 1;
+    }
+    canAction() {
+        return this.hp > 0;
+    }
+}
+/// <reference path="./Character.ts" />
 class Party {
     init(name) {
         this.x = 0;
         this.y = 0;
         this.direction = 0;
         this.encounter = 1;
+        this.gold = 20;
+        let c = new Character();
+        c.name = name;
+        c.hp = 16;
+        c.maxHp = 16;
+        c.mp = 0;
+        c.maxMp = 0;
+        c.attack = 6;
+        c.defence = 0;
+        c.xp = 0;
+        c.nextXp = 2;
+        this.characters = [c];
+    }
+    copy() {
+        let p = new Party();
+        p.characters = [];
+        this.characters.forEach((c) => {
+            p.characters.push(c.copy());
+        });
+        return p;
+    }
+    update(p) {
+        this.characters.forEach((c, index) => {
+            let src = p.characters[index];
+            c.update(src);
+        });
     }
     goForward() {
         switch (this.direction) {
@@ -68,6 +149,14 @@ class Party {
                 this.direction = 0;
                 break;
         }
+    }
+    addBattleResult(xp, gold) {
+        this.characters.forEach((c) => {
+            if (c.hp > 0) {
+                c.xp += xp;
+            }
+        });
+        this.gold += gold;
     }
 }
 class Maze {
@@ -198,15 +287,63 @@ class Application {
     }
 }
 const STATE_PARTY_COMMAND = 1;
+const STATE_DO_FIRST_CHARACTER = 2;
+const STATE_CHECK_DEAD = 3;
+const STATE_CHECK_WIN = 4;
+const STATE_CHECK_LEVEL_UP = 5;
+const STATE_CHECK_DEAD_PARTY = 6;
 class BattleEngine {
-    constructor(callback) {
+    constructor(callback, party, enemies) {
         this.callback = callback;
+        this.party = party;
+        this.enemies = enemies;
         this.state = STATE_PARTY_COMMAND;
+        this.gotXP = 0;
+        this.gotGold = 0;
+    }
+    startAction(actions) {
+        this.actions = actions;
+        this.order = [];
+        actions.forEach((a) => {
+            this.order.push({
+                type: 0,
+                index: a.index,
+                speed: 1,
+                action: a,
+            });
+        });
+        this.enemies.forEach((e, index) => {
+            this.order.push({
+                type: 1,
+                index: index,
+                speed: 1,
+            });
+        });
+        this.order.sort((a, b) => {
+            return b.speed - a.speed;
+        });
+        this.state = STATE_DO_FIRST_CHARACTER;
+        this.doNext();
     }
     doNext() {
         switch (this.state) {
             case STATE_PARTY_COMMAND:
                 this.callback.showPartyCommand();
+                break;
+            case STATE_DO_FIRST_CHARACTER:
+                this.doAction();
+                break;
+            case STATE_CHECK_DEAD:
+                this.checkDead();
+                break;
+            case STATE_CHECK_WIN:
+                this.checkWin();
+                break;
+            case STATE_CHECK_LEVEL_UP:
+                this.checkLevelUp();
+                break;
+            case STATE_CHECK_DEAD_PARTY:
+                this.checkDeadParty();
                 break;
         }
     }
@@ -214,28 +351,155 @@ class BattleEngine {
         // TODO: to roll dice
         this.callback.didRun();
     }
+    doAction() {
+        if (this.order.length == 0) {
+            this.callback.showPartyCommand();
+            return;
+        }
+        let order = this.order.shift();
+        if (order.type == 0) {
+            // player
+            let c = this.party.characters[order.index];
+            if (!c.canAction()) {
+                // next character
+                this.doAction();
+                return;
+            }
+            switch (order.action.type1) {
+                case 1:// Fight
+                    this.state = STATE_CHECK_DEAD;
+                    let e = this.enemies[order.action.target];
+                    let damage = Math.trunc(c.attack / 2 - e.defence / 4);
+                    e.addHp(-damage);
+                    this.deadCheckCharacter = e;
+                    this.deadCheckIndex = order.action.target;
+                    this.callback.showMessage(c.name + ' attacks ' +
+                        e.name + ' and took 0x' + damage.toString(16) + ' damage!');
+                    break;
+            }
+        }
+        else {
+            // enemy
+            let c = this.enemies[order.index];
+            if (!c.canAction()) {
+                // next character
+                this.doAction();
+                return;
+            }
+            // TODO: determine action
+            this.state = STATE_CHECK_DEAD_PARTY;
+            let e = this.party.characters[0];
+            let damage = Math.trunc(c.attack / 2 - e.defence / 4);
+            e.addHp(-damage);
+            this.deadCheckCharacter = e;
+            this.deadCheckIndex = 0;
+            this.callback.showMessage(c.name + ' attacks ' +
+                e.name + ' and took 0x' + damage.toString(16) + ' damage!');
+        }
+    }
+    checkDead() {
+        if (this.deadCheckCharacter.hp == 0) {
+            this.gotXP += this.deadCheckCharacter.xp;
+            this.gotGold += this.deadCheckCharacter.nextXp;
+            this.state = STATE_CHECK_WIN;
+            this.callback.removeEnemy(this.deadCheckIndex);
+            this.callback.showMessage(this.deadCheckCharacter.name + ' is killed!');
+            return;
+        }
+        else {
+            this.doAction();
+        }
+    }
+    checkWin() {
+        let won = true;
+        this.enemies.forEach((e) => {
+            if (e.hp > 0) {
+                won = false;
+            }
+        });
+        if (won) {
+            this.state = STATE_CHECK_LEVEL_UP;
+            this.party.addBattleResult(this.gotXP, this.gotGold);
+            this.callback.showMessage('you got 0x' + this.gotXP.toString(16) + ' XP and\n0x' +
+                this.gotGold.toString(16) + ' Gold!');
+        }
+        else {
+            this.doAction();
+        }
+    }
+    checkLevelUp() {
+        for (var i = 0; i < this.party.characters.length; ++i) {
+            let c = this.party.characters[i];
+            if (c.xp >= c.nextXp) {
+                // level up!
+                c.levelUp();
+                this.callback.showMessage(c.name + ' becomes level 0x' + c.level.toString(16) + '!!');
+                return;
+            }
+        }
+        ;
+        this.callback.endBattle();
+    }
+    checkDeadParty() {
+        if (this.deadCheckCharacter.hp == 0) {
+            this.state = STATE_CHECK_WIN;
+            this.callback.removeEnemy(this.deadCheckIndex);
+            this.callback.showMessage(this.deadCheckCharacter.name + ' is killed!');
+            return;
+        }
+        else {
+            this.doAction();
+        }
+    }
+}
+class BattleAction {
+    constructor(index, type1, type2, target) {
+        this.index = index;
+        this.type1 = type1;
+        this.type2 = type2;
+        this.target = target;
+    }
 }
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
 /// <reference path="../maze/MazeScene.ts"/>
 /// <reference path="./BattleEngine.ts"/>
 class BattleScene {
-    constructor(app) {
+    constructor(app, enemies) {
         this.app = app;
-        this.engine = new BattleEngine(this);
+        this.engine = new BattleEngine(this, app.party.copy(), enemies);
     }
     onCreate() {
         this.app.getTemplate('battleTemplate').then((t) => {
+            let enemies = [];
+            this.engine.enemies.forEach((e) => {
+                enemies.push({
+                    alive: true,
+                });
+            });
             this.ractive = new Ractive({
                 el: '#c',
                 template: t,
                 data: {
+                    msg: 'An encounter!',
                     buttonState: 1,
+                    p: null,
+                    enemies: enemies,
                 }
             });
             this.ractive.on({
                 ok: () => {
                     this.engine.doNext();
+                },
+                fight: () => {
+                    if (this.engine.enemies.length > 1) {
+                        this.actionType = 1;
+                        this.ractive.set('msg', 'Choose target');
+                    }
+                    else {
+                        this.actions.push(new BattleAction(this.actionIndex, 1, 0, 0));
+                        this.toNextCharacterCommand();
+                    }
                 },
                 run: () => {
                     this.engine.run();
@@ -244,11 +508,52 @@ class BattleScene {
         });
     }
     showPartyCommand() {
-        this.ractive.set('buttonState', 2);
+        this.actionIndex = -1;
+        this.actions = [];
+        this.toNextCharacterCommand();
     }
     didRun() {
-        //TODO update party
+        this.app.party.update(this.engine.party);
         this.app.showScene(new MazeScene(this.app));
+    }
+    showMessage(msg) {
+        this.ractive.set({
+            'msg': msg,
+            'buttonState': 1,
+        });
+    }
+    removeEnemy(index) {
+        let enemies = this.ractive.get('enemies');
+        enemies[index].alive = false;
+        this.ractive.set('enemies', enemies);
+    }
+    endBattle() {
+        this.app.party.update(this.engine.party);
+        this.app.showScene(new MazeScene(this.app));
+    }
+    toNextCharacterCommand() {
+        this.actionIndex = this.findNextActionCharacter(this.actionIndex);
+        if (this.actionIndex == -1) {
+            this.ractive.set('p', null);
+            this.engine.startAction(this.actions);
+            return;
+        }
+        let p = this.engine.party.characters[this.actionIndex];
+        this.ractive.set({
+            'buttonState': 2,
+            'msg': p.name + "'s option",
+            p: p,
+        });
+    }
+    findNextActionCharacter(index) {
+        let characters = this.engine.party.characters;
+        ++index;
+        while (index < characters.length) {
+            if (characters[index].canAction())
+                break;
+            ++index;
+        }
+        return (index >= characters.length) ? -1 : index;
     }
 }
 /// <reference path="../Scene.ts"/>
@@ -302,7 +607,16 @@ class MazeScene {
         this.app.party.encounter--;
         if (this.app.party.encounter <= 0) {
             this.app.party.encounter = Math.random() * 10 + 3;
-            this.app.showScene(new BattleScene(this.app));
+            let e1 = new Character();
+            e1.name = 'Enemy 0x01';
+            e1.hp = 4;
+            e1.maxHp = 10;
+            e1.attack = 2;
+            e1.defence = 0;
+            e1.xp = 1;
+            e1.nextXp = 2;
+            let enemies = [e1];
+            this.app.showScene(new BattleScene(this.app, enemies));
         }
     }
     showActionText(text) {
@@ -385,7 +699,7 @@ class SetupScene {
                 el: '#c',
                 template: t,
                 data: {
-                    name: "",
+                    name: "0x01",
                     isEmpty: (v) => {
                         return v.length == 0;
                     }
