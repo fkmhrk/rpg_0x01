@@ -27,6 +27,7 @@ class SetupScene implements Scene {
                     this.submit();
                 }
             });
+            document.getElementById('name').focus();
         });
     }
 

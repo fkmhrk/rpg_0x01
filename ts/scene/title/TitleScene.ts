@@ -29,6 +29,10 @@ class TitleScene implements Scene {
     }
 
     private resume() {
-        this.app.showScene(new MazeScene(this.app));
+        if (this.app.load()) {
+            this.app.showScene(new MazeScene(this.app));
+        } else {
+            this.app.showScene(new SetupScene(this.app));
+        }        
     }
 }

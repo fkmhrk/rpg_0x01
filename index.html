@@ -29,7 +29,7 @@
 
             <section class="form">
                 <label>Name</label><br/>
-                <input type="text" value="{{name}}"/>
+                <input id="name" type="text" value="{{name}}"/>
             </section>
             <div class="right">
                 <button on-click="submit" disabled="{{isEmpty(name)}}">OK</button>
@@ -43,9 +43,9 @@
             <canvas id="maze" width="320" height="320"></canvas>
             <section class="buttons">
                 <table class="move">
-                    <tr><td></td><td><button>Go</button></td><td></td></tr>
-                    <tr><td><button>Left</button></td><td></td><td><button>Right</button></td></tr>
-                    <tr><td></td><td><button>Back</button></td><td></td></tr>
+                    <tr><td></td><td><button on-click="go">Go</button></td><td></td></tr>
+                    <tr><td><button on-click="left">Left</button></td><td></td><td><button on-click="right">Right</button></td></tr>
+                    <tr><td></td><td><button on-click="back">Back</button></td><td></td></tr>
                 </table>
             </section>
         </section>
