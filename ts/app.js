@@ -13,6 +13,7 @@ class Character {
         c.defence = e['def'];
         c.xp = e['xp'];
         c.nextXp = e['gold'];
+        c.image = e['img'];
         return c;
     }
     addHp(value) {
@@ -36,6 +37,7 @@ class Character {
         c.defence = this.defence;
         c.xp = this.xp;
         c.nextXp = this.nextXp;
+        c.image = this.image;
         return c;
     }
     update(c) {
@@ -205,6 +207,7 @@ const mazeData = [
                 def: 0,
                 xp: 1,
                 gold: 2,
+                img: 'e1.png',
             }],
         teams: [
             [0],
@@ -601,11 +604,11 @@ class BattleScene {
     }
     onCreate() {
         this.app.getTemplate('battleTemplate').then((t) => {
-            let enemies = [];
-            this.engine.enemies.forEach((e) => {
-                enemies.push({
+            let enemies = this.engine.enemies.map((e) => {
+                return {
                     alive: true,
-                });
+                    img: e.image,
+                };
             });
             this.ractive = new Ractive({
                 el: '#c',
