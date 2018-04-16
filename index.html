@@ -57,13 +57,13 @@
                 <section class="enemyImages">
                     {{#enemies:i}}
                     {{#if .alive == true}}
-                    <img on-click="['selectEnemy', i]"/>
+                    <img id="enemy{{i}}" on-click="['selectEnemy', i]"/>
                     {{/if}}
                     {{/}}
                 </section>
             </section>
 
-            <pre class="msg">{{msg}}</pre>
+            <pre id="msg" class="msg">{{msg}}</pre>
 
             <section class="buttons">
                 {{#if p != null}}

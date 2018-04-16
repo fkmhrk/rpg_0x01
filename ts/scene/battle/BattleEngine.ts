@@ -1,9 +1,11 @@
+/// <reference path="../../model/party/Party.ts" />
 const STATE_PARTY_COMMAND = 1;
 const STATE_DO_FIRST_CHARACTER = 2;
 const STATE_CHECK_DEAD = 3;
 const STATE_CHECK_WIN = 4;
 const STATE_CHECK_LEVEL_UP = 5;
 const STATE_CHECK_DEAD_PARTY = 6;
+
 
 class BattleEngine {
     state: number;
@@ -108,6 +110,7 @@ class BattleEngine {
 
                 this.deadCheckCharacter = e;
                 this.deadCheckIndex = order.action.target;
+                this.callback.shakeEnemy(order.action.target);
                 this.callback.showMessage(c.name + ' attacks ' + 
                     e.name + ' and took 0x' + damage.toString(16) + ' damage!');
                 break;
@@ -128,6 +131,7 @@ class BattleEngine {
 
             this.deadCheckCharacter = e;
             this.deadCheckIndex = 0;
+            this.callback.shakeMessage();
             this.callback.showMessage(c.name + ' attacks ' + 
                 e.name + ' and took 0x' + damage.toString(16) + ' damage!');            
         }
@@ -191,6 +195,8 @@ class BattleEngine {
 interface BattleCallback {
     showPartyCommand();
     didRun();
+    shakeEnemy(index: number);
+    shakeMessage();
     showMessage(msg: string);
     removeEnemy(index: number);
     endBattle();
