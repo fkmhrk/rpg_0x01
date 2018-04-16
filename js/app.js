@@ -309,6 +309,7 @@ class Application {
         return this.maze.getWalls(this.party.x, this.party.y, this.party.direction);
     }
 }
+/// <reference path="../../model/party/Party.ts" />
 const STATE_PARTY_COMMAND = 1;
 const STATE_DO_FIRST_CHARACTER = 2;
 const STATE_CHECK_DEAD = 3;
@@ -396,6 +397,7 @@ class BattleEngine {
                     e.addHp(-damage);
                     this.deadCheckCharacter = e;
                     this.deadCheckIndex = order.action.target;
+                    this.callback.shakeEnemy(order.action.target);
                     this.callback.showMessage(c.name + ' attacks ' +
                         e.name + ' and took 0x' + damage.toString(16) + ' damage!');
                     break;
@@ -416,6 +418,7 @@ class BattleEngine {
             e.addHp(-damage);
             this.deadCheckCharacter = e;
             this.deadCheckIndex = 0;
+            this.callback.shakeMessage();
             this.callback.showMessage(c.name + ' attacks ' +
                 e.name + ' and took 0x' + damage.toString(16) + ' damage!');
         }
@@ -546,6 +549,20 @@ class BattleScene {
     didRun() {
         this.app.party.update(this.engine.party);
         this.app.showScene(new MazeScene(this.app));
+    }
+    shakeEnemy(index) {
+        this.shakeElement(document.getElementById('enemy' + index));
+    }
+    shakeMessage() {
+        this.shakeElement(document.getElementById('msg'));
+    }
+    shakeElement(e) {
+        e.classList.add('shake');
+        let handler = () => {
+            e.classList.remove('shake');
+            e.removeEventListener('animationend', handler);
+        };
+        e.addEventListener("animationend", handler);
     }
     showMessage(msg) {
         this.ractive.set({

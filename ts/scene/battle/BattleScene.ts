@@ -73,6 +73,23 @@ class BattleScene implements Scene {
         this.app.showScene(new MazeScene(this.app));
     }
 
+    shakeEnemy(index: number) {
+        this.shakeElement(document.getElementById('enemy' + index));
+    }
+
+    shakeMessage() {
+        this.shakeElement(document.getElementById('msg'));
+    }
+
+    private shakeElement(e: HTMLElement) {
+        e.classList.add('shake');
+        let handler = () => {
+            e.classList.remove('shake');
+            e.removeEventListener('animationend', handler);
+        };
+        e.addEventListener("animationend", handler);        
+    }
+
     showMessage(msg: string) {
         this.ractive.set({
             'msg': msg,
