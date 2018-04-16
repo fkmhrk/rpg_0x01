@@ -2,6 +2,7 @@
 /// <reference path="../../Application.ts"/>
 /// <reference path="../maze/MazeScene.ts"/>
 /// <reference path="./BattleEngine.ts"/>
+/// <reference path="../gameover/GameOverScene.ts" />
 
 class BattleScene implements Scene {
     app: Application;
@@ -109,7 +110,7 @@ class BattleScene implements Scene {
     }
 
     showAllDeadScene() {
-        alert('oops');
+        this.app.showScene(new GameOverScene(this.app));
     }
 
     private toNextCharacterCommand() {

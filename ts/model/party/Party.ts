@@ -27,17 +27,6 @@ class Party {
         c.xp = 0;
         c.nextXp = 2;
         this.characters = [ c ];
-        c = new Character();
-        c.name = '0x02';
-        c.hp = 16;
-        c.maxHp = 16;
-        c.mp = 0;
-        c.maxMp = 0;
-        c.attack = 6;
-        c.defence = 0;
-        c.xp = 0;
-        c.nextXp = 2;        
-        this.characters.push(c);
     }
 
     copy(): Party {

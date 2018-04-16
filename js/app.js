@@ -71,17 +71,6 @@ class Party {
         c.xp = 0;
         c.nextXp = 2;
         this.characters = [c];
-        c = new Character();
-        c.name = '0x02';
-        c.hp = 16;
-        c.maxHp = 16;
-        c.mp = 0;
-        c.maxMp = 0;
-        c.attack = 6;
-        c.defence = 0;
-        c.xp = 0;
-        c.nextXp = 2;
-        this.characters.push(c);
     }
     copy() {
         let p = new Party();
@@ -203,7 +192,7 @@ class Maze {
         e1.name = 'Enemy 0x01';
         e1.hp = 4;
         e1.maxHp = 10;
-        e1.attack = 200;
+        e1.attack = 2;
         e1.defence = 0;
         e1.xp = 1;
         e1.nextXp = 2;
@@ -453,7 +442,7 @@ class BattleEngine {
             let damage = Math.trunc(c.attack / 2 - e.defence / 4);
             e.addHp(-damage);
             this.deadCheckCharacter = e;
-            this.deadCheckIndex = 0;
+            this.deadCheckIndex = targetIndex;
             this.callback.shakeMessage();
             this.callback.showMessage(c.name + ' attacks ' +
                 e.name + ' and took 0x' + damage.toString(16) + ' damage!');
@@ -531,8 +520,42 @@ class BattleAction {
 }
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../setup/SetupScene.ts"/>
+/// <reference path="../maze/MazeScene.ts"/>
+class GameOverScene {
+    constructor(app) {
+        this.app = app;
+    }
+    onCreate() {
+        this.app.getTemplate('gameOverTemplate').then((t) => {
+            this.ractive = new Ractive({
+                el: '#c',
+                template: t,
+            });
+            this.ractive.on({
+                start: () => {
+                    this.app.showScene(new SetupScene(this.app));
+                },
+                resume: () => {
+                    this.resume();
+                }
+            });
+        });
+    }
+    resume() {
+        if (this.app.load()) {
+            this.app.showScene(new MazeScene(this.app));
+        }
+        else {
+            this.app.showScene(new SetupScene(this.app));
+        }
+    }
+}
+/// <reference path="../Scene.ts"/>
+/// <reference path="../../Application.ts"/>
 /// <reference path="../maze/MazeScene.ts"/>
 /// <reference path="./BattleEngine.ts"/>
+/// <reference path="../gameover/GameOverScene.ts" />
 class BattleScene {
     constructor(app, enemies) {
         this.app = app;
@@ -623,7 +646,7 @@ class BattleScene {
         this.app.showScene(new MazeScene(this.app));
     }
     showAllDeadScene() {
-        alert('oops');
+        this.app.showScene(new GameOverScene(this.app));
     }
     toNextCharacterCommand() {
         this.actionIndex = this.findNextActionCharacter(this.actionIndex);

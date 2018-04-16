@@ -113,3 +113,17 @@
   .battleScene .buttons .commands {
     display: flex;
     justify-content: space-around; }
+
+.gameOverScene .center {
+  position: fixed;
+  width: 320px;
+  height: 64px;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto; }
+.gameOverScene h1 {
+  text-align: center; }
+.gameOverScene .button {
+  text-align: center; }
