@@ -15,6 +15,7 @@ class BattleScene implements Scene {
     constructor(app: Application, enemies: Character[]) {
         this.app = app;
         this.engine = new BattleEngine(this, app.party.copy(), enemies);
+        this.actionType = 0;
     }  
 
     onCreate() {
@@ -50,7 +51,13 @@ class BattleScene implements Scene {
                 },   
                 run: () => {
                     this.engine.run();
-                }
+                },
+                selectEnemy: (e: any, index: number) => {
+                    if (this.actionType == 0) return;
+                    this.actions.push(new BattleAction(this.actionIndex, this.actionType, 0, index));
+                    this.actionType = 0;
+                    this.toNextCharacterCommand();
+                },
             });
         });
     }

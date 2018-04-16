@@ -1,5 +1,9 @@
+/// <reference path="../party/Character.ts" />
+
 class Maze {
     data: number[][];
+    enemies: Character[];
+    teams: number[][];
 
     constructor() {
         this.data = [
@@ -12,6 +16,22 @@ class Maze {
             [ 6, 2, 8, 8, 8, 8,12, 6],
             [10, 8, 9, 9, 9, 9, 9,12],
         ];
+        this.enemies = [];
+        let e1 = new Character();
+        e1.name = 'Enemy 0x01';
+        e1.hp = 4;
+        e1.maxHp = 10;
+        e1.attack = 2;
+        e1.defence = 0;
+        e1.xp = 1;
+        e1.nextXp = 2;    
+        this.enemies.push(e1);
+
+        this.teams = [];
+        this.teams.push([0, 0]);
+        this.teams.push([0]);
+        this.teams.push([0, 0]);
+        this.teams.push([0]);
     }
 
     getWalls(x: number, y: number, d: number): Walls {
@@ -82,6 +102,14 @@ class Maze {
             }
         }
         return w;
+    }
+
+    determineEnemyTeam(): Character[] {
+        let teamIndex = Math.floor(Math.random() * this.teams.length);
+        let team = this.teams[teamIndex];
+        return team.map((charIndex: number) => {
+            return this.enemies[charIndex].copy();
+        });
     }
 }
 
