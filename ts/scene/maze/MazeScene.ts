@@ -63,6 +63,7 @@ class MazeScene implements Scene {
             this.app.party.encounter = Math.random() * 10 + 3;
 
             let enemies = this.app.maze.determineEnemyTeam();
+            if (enemies.length == 0) return;
             this.app.showScene(new BattleScene(this.app, enemies));
         }        
     }

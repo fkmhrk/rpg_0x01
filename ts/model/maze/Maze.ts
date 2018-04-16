@@ -1,4 +1,5 @@
 /// <reference path="../party/Character.ts" />
+/// <reference path="./data.ts" />
 
 class Maze {
     data: number[][];
@@ -32,6 +33,14 @@ class Maze {
         this.teams.push([0]);
         this.teams.push([0, 0]);
         this.teams.push([0]);
+    }
+
+    loadFloor(floor: number) {
+        this.data = mazeData[floor].walls;
+        this.enemies = mazeData[floor].enemies.map((e: any) => {
+            return Character.from(e);
+        });
+        this.teams = mazeData[floor].teams;
     }
 
     getWalls(x: number, y: number, d: number): Walls {
