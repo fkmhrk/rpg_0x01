@@ -27,6 +27,17 @@ class Party {
         c.xp = 0;
         c.nextXp = 2;
         this.characters = [ c ];
+        c = new Character();
+        c.name = '0x02';
+        c.hp = 16;
+        c.maxHp = 16;
+        c.mp = 0;
+        c.maxMp = 0;
+        c.attack = 6;
+        c.defence = 0;
+        c.xp = 0;
+        c.nextXp = 2;        
+        this.characters.push(c);
     }
 
     copy(): Party {
@@ -87,5 +98,22 @@ class Party {
             }
         });
         this.gold += gold;
+    }
+
+    isAllDead(): boolean {
+        return this.characters.map((c: Character) => {
+            return <number>(c.hp == 0 ? 1 : 0);
+        }).reduce((t: number, current: number) => {
+            return t + current;
+        }) == this.characters.length;
+    }
+
+    getRandomAliveIndex(): number{ 
+        while (true) {
+            let index = Math.floor(Math.random() * this.characters.length);
+            if (this.characters[index].hp > 0) {
+                return index;
+            }
+        }
     }
 }

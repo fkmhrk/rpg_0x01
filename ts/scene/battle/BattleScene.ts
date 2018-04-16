@@ -108,6 +108,10 @@ class BattleScene implements Scene {
         this.app.showScene(new MazeScene(this.app));
     }
 
+    showAllDeadScene() {
+        alert('oops');
+    }
+
     private toNextCharacterCommand() {
         this.actionIndex = this.findNextActionCharacter(this.actionIndex);
         if (this.actionIndex == -1) {

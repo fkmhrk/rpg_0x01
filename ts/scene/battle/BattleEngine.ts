@@ -5,7 +5,7 @@ const STATE_CHECK_DEAD = 3;
 const STATE_CHECK_WIN = 4;
 const STATE_CHECK_LEVEL_UP = 5;
 const STATE_CHECK_DEAD_PARTY = 6;
-
+const STATE_CHECK_LOSE = 7;
 
 class BattleEngine {
     state: number;
@@ -79,6 +79,9 @@ class BattleEngine {
         case STATE_CHECK_DEAD_PARTY:
             this.checkDeadParty();
             break;
+        case STATE_CHECK_LOSE:
+            this.checkLose();
+            break;
         }
     }
 
@@ -105,6 +108,11 @@ class BattleEngine {
             case 1: // Fight
                 this.state = STATE_CHECK_DEAD;
                 let e = this.enemies[order.action.target];
+                if (e.hp == 0) {
+                    // this one is already dead! next character
+                    this.doAction();
+                    return;
+                }
                 let damage = Math.trunc(c.attack / 2 - e.defence / 4);
                 e.addHp(-damage);
 
@@ -125,12 +133,13 @@ class BattleEngine {
             }
             // TODO: determine action
             this.state = STATE_CHECK_DEAD_PARTY;
-            let e = this.party.characters[0];
+            let targetIndex = this.party.getRandomAliveIndex();
+            let e = this.party.characters[targetIndex];
             let damage = Math.trunc(c.attack / 2 - e.defence / 4);
             e.addHp(-damage);
 
             this.deadCheckCharacter = e;
-            this.deadCheckIndex = 0;
+            this.deadCheckIndex = targetIndex;
             this.callback.shakeMessage();
             this.callback.showMessage(c.name + ' attacks ' + 
                 e.name + ' and took 0x' + damage.toString(16) + ' damage!');            
@@ -182,13 +191,20 @@ class BattleEngine {
 
     private checkDeadParty() {
         if (this.deadCheckCharacter.hp == 0) {
-            this.state = STATE_CHECK_WIN;                        
-            this.callback.removeEnemy(this.deadCheckIndex);
+            this.state = STATE_CHECK_LOSE;
             this.callback.showMessage(this.deadCheckCharacter.name + ' is killed!');
             return;
         } else {
             this.doAction();
         }        
+    }
+
+    private checkLose() {
+        if (this.party.isAllDead()) {
+            this.callback.showAllDeadScene();
+        } else {
+            this.doAction();
+        }
     }
 }
 
@@ -200,6 +216,7 @@ interface BattleCallback {
     showMessage(msg: string);
     removeEnemy(index: number);
     endBattle();
+    showAllDeadScene();
 }
 
 class BattleAction {

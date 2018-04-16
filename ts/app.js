@@ -71,6 +71,17 @@ class Party {
         c.xp = 0;
         c.nextXp = 2;
         this.characters = [c];
+        c = new Character();
+        c.name = '0x02';
+        c.hp = 16;
+        c.maxHp = 16;
+        c.mp = 0;
+        c.maxMp = 0;
+        c.attack = 6;
+        c.defence = 0;
+        c.xp = 0;
+        c.nextXp = 2;
+        this.characters.push(c);
     }
     copy() {
         let p = new Party();
@@ -158,6 +169,21 @@ class Party {
         });
         this.gold += gold;
     }
+    isAllDead() {
+        return this.characters.map((c) => {
+            return (c.hp == 0 ? 1 : 0);
+        }).reduce((t, current) => {
+            return t + current;
+        }) == this.characters.length;
+    }
+    getRandomAliveIndex() {
+        while (true) {
+            let index = Math.floor(Math.random() * this.characters.length);
+            if (this.characters[index].hp > 0) {
+                return index;
+            }
+        }
+    }
 }
 /// <reference path="../party/Character.ts" />
 class Maze {
@@ -177,7 +203,7 @@ class Maze {
         e1.name = 'Enemy 0x01';
         e1.hp = 4;
         e1.maxHp = 10;
-        e1.attack = 2;
+        e1.attack = 200;
         e1.defence = 0;
         e1.xp = 1;
         e1.nextXp = 2;
@@ -316,6 +342,7 @@ const STATE_CHECK_DEAD = 3;
 const STATE_CHECK_WIN = 4;
 const STATE_CHECK_LEVEL_UP = 5;
 const STATE_CHECK_DEAD_PARTY = 6;
+const STATE_CHECK_LOSE = 7;
 class BattleEngine {
     constructor(callback, party, enemies) {
         this.callback = callback;
@@ -369,6 +396,9 @@ class BattleEngine {
             case STATE_CHECK_DEAD_PARTY:
                 this.checkDeadParty();
                 break;
+            case STATE_CHECK_LOSE:
+                this.checkLose();
+                break;
         }
     }
     run() {
@@ -393,6 +423,11 @@ class BattleEngine {
                 case 1:// Fight
                     this.state = STATE_CHECK_DEAD;
                     let e = this.enemies[order.action.target];
+                    if (e.hp == 0) {
+                        // this one is already dead! next character
+                        this.doAction();
+                        return;
+                    }
                     let damage = Math.trunc(c.attack / 2 - e.defence / 4);
                     e.addHp(-damage);
                     this.deadCheckCharacter = e;
@@ -413,7 +448,8 @@ class BattleEngine {
             }
             // TODO: determine action
             this.state = STATE_CHECK_DEAD_PARTY;
-            let e = this.party.characters[0];
+            let targetIndex = this.party.getRandomAliveIndex();
+            let e = this.party.characters[targetIndex];
             let damage = Math.trunc(c.attack / 2 - e.defence / 4);
             e.addHp(-damage);
             this.deadCheckCharacter = e;
@@ -468,10 +504,17 @@ class BattleEngine {
     }
     checkDeadParty() {
         if (this.deadCheckCharacter.hp == 0) {
-            this.state = STATE_CHECK_WIN;
-            this.callback.removeEnemy(this.deadCheckIndex);
+            this.state = STATE_CHECK_LOSE;
             this.callback.showMessage(this.deadCheckCharacter.name + ' is killed!');
             return;
+        }
+        else {
+            this.doAction();
+        }
+    }
+    checkLose() {
+        if (this.party.isAllDead()) {
+            this.callback.showAllDeadScene();
         }
         else {
             this.doAction();
@@ -578,6 +621,9 @@ class BattleScene {
     endBattle() {
         this.app.party.update(this.engine.party);
         this.app.showScene(new MazeScene(this.app));
+    }
+    showAllDeadScene() {
+        alert('oops');
     }
     toNextCharacterCommand() {
         this.actionIndex = this.findNextActionCharacter(this.actionIndex);
