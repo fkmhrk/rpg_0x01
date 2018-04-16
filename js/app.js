@@ -159,6 +159,7 @@ class Party {
         this.gold += gold;
     }
 }
+/// <reference path="../party/Character.ts" />
 class Maze {
     constructor() {
         this.data = [
@@ -171,6 +172,21 @@ class Maze {
             [6, 2, 8, 8, 8, 8, 12, 6],
             [10, 8, 9, 9, 9, 9, 9, 12],
         ];
+        this.enemies = [];
+        let e1 = new Character();
+        e1.name = 'Enemy 0x01';
+        e1.hp = 4;
+        e1.maxHp = 10;
+        e1.attack = 2;
+        e1.defence = 0;
+        e1.xp = 1;
+        e1.nextXp = 2;
+        this.enemies.push(e1);
+        this.teams = [];
+        this.teams.push([0, 0]);
+        this.teams.push([0]);
+        this.teams.push([0, 0]);
+        this.teams.push([0]);
     }
     getWalls(x, y, d) {
         let w = new Walls();
@@ -243,6 +259,13 @@ class Maze {
             }
         }
         return w;
+    }
+    determineEnemyTeam() {
+        let teamIndex = Math.floor(Math.random() * this.teams.length);
+        let team = this.teams[teamIndex];
+        return team.map((charIndex) => {
+            return this.enemies[charIndex].copy();
+        });
     }
 }
 class Walls {
@@ -468,6 +491,7 @@ class BattleScene {
     constructor(app, enemies) {
         this.app = app;
         this.engine = new BattleEngine(this, app.party.copy(), enemies);
+        this.actionType = 0;
     }
     onCreate() {
         this.app.getTemplate('battleTemplate').then((t) => {
@@ -503,7 +527,14 @@ class BattleScene {
                 },
                 run: () => {
                     this.engine.run();
-                }
+                },
+                selectEnemy: (e, index) => {
+                    if (this.actionType == 0)
+                        return;
+                    this.actions.push(new BattleAction(this.actionIndex, this.actionType, 0, index));
+                    this.actionType = 0;
+                    this.toNextCharacterCommand();
+                },
             });
         });
     }
@@ -607,15 +638,7 @@ class MazeScene {
         this.app.party.encounter--;
         if (this.app.party.encounter <= 0) {
             this.app.party.encounter = Math.random() * 10 + 3;
-            let e1 = new Character();
-            e1.name = 'Enemy 0x01';
-            e1.hp = 4;
-            e1.maxHp = 10;
-            e1.attack = 2;
-            e1.defence = 0;
-            e1.xp = 1;
-            e1.nextXp = 2;
-            let enemies = [e1];
+            let enemies = this.app.maze.determineEnemyTeam();
             this.app.showScene(new BattleScene(this.app, enemies));
         }
     }

@@ -55,9 +55,9 @@
         <section class="battleScene">
             <section class="background">
                 <section class="enemyImages">
-                    {{#enemies}}
+                    {{#enemies:i}}
                     {{#if .alive == true}}
-                    <img/>
+                    <img on-click="['selectEnemy', i]"/>
                     {{/if}}
                     {{/}}
                 </section>
