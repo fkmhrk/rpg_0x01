@@ -57,7 +57,7 @@
                 <section class="enemyImages">
                     {{#enemies:i}}
                     {{#if .alive == true}}
-                    <img id="enemy{{i}}" on-click="['selectEnemy', i]"/>
+                    <img id="enemy{{i}}" src="./images/{{.img}}" on-click="['selectEnemy', i]"/>
                     {{/if}}
                     {{/}}
                 </section>

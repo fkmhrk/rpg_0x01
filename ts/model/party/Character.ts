@@ -12,6 +12,8 @@ class Character {
     xp: number;
     nextXp: number;
 
+    image?: string;
+
     constructor() {
         this.level = 1;
         this.xp = 0;
@@ -27,6 +29,7 @@ class Character {
         c.defence = e['def'];
         c.xp = e['xp'];
         c.nextXp = e['gold'];
+        c.image = e['img'];
         return c;
     }
 
@@ -51,6 +54,7 @@ class Character {
         c.defence = this.defence;
         c.xp = this.xp;
         c.nextXp = this.nextXp;
+        c.image = this.image;
         return c;
     }
 

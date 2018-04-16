@@ -21,12 +21,12 @@ class BattleScene implements Scene {
 
     onCreate() {
         this.app.getTemplate('battleTemplate').then((t : string) => {
-            let enemies = [];
-            this.engine.enemies.forEach((e: Character) => {
-                enemies.push({
+            let enemies = this.engine.enemies.map((e: Character) => {
+                return {
                     alive: true,
-                });
-            })
+                    img: e.image,
+                };
+            });
             this.ractive = new Ractive({
                 el: '#c',
                 template: t,

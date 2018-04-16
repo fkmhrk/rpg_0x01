@@ -18,6 +18,7 @@ const mazeData = [
             def: 0,
             xp: 1,
             gold: 2,
+            img: 'e1.png',
         }],
         teams: [
             [0],
