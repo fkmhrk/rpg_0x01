@@ -34,6 +34,7 @@ class SetupScene implements Scene {
     private submit() {
         let name = this.ractive.get('name');
         this.app.initParty(name);
+        this.app.maze.loadFloor(0);
         this.app.showScene(new MazeScene(this.app));
     }
 }

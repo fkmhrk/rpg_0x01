@@ -18,6 +18,18 @@ class Character {
         this.nextXp = 0;
     }
 
+    static from(e: any): Character {
+        let c = new Character();
+        c.name = e['name'];
+        c.hp = c.maxHp = e['hp'];
+        c.mp = c.maxMp = e['mp'];
+        c.attack = e['atc'];
+        c.defence = e['def'];
+        c.xp = e['xp'];
+        c.nextXp = e['gold'];
+        return c;
+    }
+
     addHp(value: number) {
         this.hp += value;
         if (this.hp < 0) {

@@ -4,6 +4,17 @@ class Character {
         this.xp = 0;
         this.nextXp = 0;
     }
+    static from(e) {
+        let c = new Character();
+        c.name = e['name'];
+        c.hp = c.maxHp = e['hp'];
+        c.mp = c.maxMp = e['mp'];
+        c.attack = e['atc'];
+        c.defence = e['def'];
+        c.xp = e['xp'];
+        c.nextXp = e['gold'];
+        return c;
+    }
     addHp(value) {
         this.hp += value;
         if (this.hp < 0) {
@@ -174,7 +185,34 @@ class Party {
         }
     }
 }
+const mazeData = [
+    {
+        walls: [
+            [3, 9, 9, 9, 9, 9, 9, 5],
+            [6, 3, 1, 1, 1, 1, 5, 6],
+            [6, 2, 0, 0, 0, 0, 4, 6],
+            [6, 2, 0, 0, 0, 0, 4, 6],
+            [6, 2, 0, 0, 0, 0, 4, 6],
+            [6, 2, 0, 0, 0, 0, 4, 6],
+            [6, 2, 8, 8, 8, 8, 12, 6],
+            [10, 8, 9, 9, 9, 9, 9, 12],
+        ],
+        enemies: [{
+                name: 'Enemy 0x01',
+                hp: 4,
+                mp: 0,
+                atc: 2,
+                def: 0,
+                xp: 1,
+                gold: 2,
+            }],
+        teams: [
+            [0],
+        ],
+    },
+];
 /// <reference path="../party/Character.ts" />
+/// <reference path="./data.ts" />
 class Maze {
     constructor() {
         this.data = [
@@ -202,6 +240,13 @@ class Maze {
         this.teams.push([0]);
         this.teams.push([0, 0]);
         this.teams.push([0]);
+    }
+    loadFloor(floor) {
+        this.data = mazeData[floor].walls;
+        this.enemies = mazeData[floor].enemies.map((e) => {
+            return Character.from(e);
+        });
+        this.teams = mazeData[floor].teams;
     }
     getWalls(x, y, d) {
         let w = new Walls();
@@ -725,6 +770,8 @@ class MazeScene {
         if (this.app.party.encounter <= 0) {
             this.app.party.encounter = Math.random() * 10 + 3;
             let enemies = this.app.maze.determineEnemyTeam();
+            if (enemies.length == 0)
+                return;
             this.app.showScene(new BattleScene(this.app, enemies));
         }
     }
@@ -825,6 +872,7 @@ class SetupScene {
     submit() {
         let name = this.ractive.get('name');
         this.app.initParty(name);
+        this.app.maze.loadFloor(0);
         this.app.showScene(new MazeScene(this.app));
     }
 }
