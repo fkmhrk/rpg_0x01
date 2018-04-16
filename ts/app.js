@@ -565,7 +565,6 @@ class BattleAction {
 }
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
-/// <reference path="../setup/SetupScene.ts"/>
 /// <reference path="../maze/MazeScene.ts"/>
 class GameOverScene {
     constructor(app) {
@@ -578,22 +577,15 @@ class GameOverScene {
                 template: t,
             });
             this.ractive.on({
-                start: () => {
-                    this.app.showScene(new SetupScene(this.app));
-                },
-                resume: () => {
-                    this.resume();
+                submit: () => {
+                    this.app.maze.loadFloor(0);
+                    this.app.party.x = 0;
+                    this.app.party.y = 0;
+                    this.app.party.direction = 3;
+                    this.app.showScene(new MazeScene(this.app));
                 }
             });
         });
-    }
-    resume() {
-        if (this.app.load()) {
-            this.app.showScene(new MazeScene(this.app));
-        }
-        else {
-            this.app.showScene(new SetupScene(this.app));
-        }
     }
 }
 /// <reference path="../Scene.ts"/>
