@@ -11,7 +11,7 @@ class Party {
 
     init(name: string) {
         this.x = 0;
-        this.y = 0;
+        this.y = 7;
         this.direction = 0;
         this.encounter = 1;
         this.gold = 20;

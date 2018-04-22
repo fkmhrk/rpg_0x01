@@ -41,12 +41,21 @@
     <div id="mazeTemplate" style="display: none;">
         <section class="mazeScene">
             <canvas id="maze" width="320" height="320"></canvas>
+            <pre id="msg" class="msg">{{msg}}</pre>
+
             <section class="buttons">
+            {{#if buttonState == 0}}
                 <table class="move">
                     <tr><td></td><td><button on-click="go">Go</button></td><td></td></tr>
                     <tr><td><button on-click="left">Left</button></td><td></td><td><button on-click="right">Right</button></td></tr>
                     <tr><td></td><td><button on-click="back">Back</button></td><td></td></tr>
                 </table>
+            {{elseif buttonState == 1}}
+            <button class="ok" on-click="ok">OK</button>
+            {{elseif buttonState == 2}}
+            <button class="yesno" on-click="no">No</button>
+            <button class="yesno" on-click="yes">Yes</button>
+            {{/if}}
             </section>
         </section>
     </div>        
