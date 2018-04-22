@@ -219,6 +219,7 @@ const mazeData = [
         eventData: [
             [
                 [1, "Welcome!"],
+                [4],
             ],
             [
                 [2, "Stairs down\n Take them?"],
@@ -1172,7 +1173,28 @@ class BattleScene {
 }
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+class EndScene {
+    constructor(app) {
+        this.app = app;
+    }
+    onCreate() {
+        this.app.getTemplate('endTemplate').then((t) => {
+            this.ractive = new Ractive({
+                el: '#c',
+                template: t,
+            });
+            this.ractive.on({
+                start: () => {
+                    this.app.showScene(new SetupScene(this.app));
+                },
+            });
+        });
+    }
+}
+/// <reference path="../Scene.ts"/>
+/// <reference path="../../Application.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
+/// <reference path="../end/EndScene.ts"/>
 class MazeScene {
     constructor(app) {
         this.app = app;
@@ -1342,6 +1364,9 @@ class MazeScene {
                     this.app.party.y = line[3];
                     this.drawMaze();
                     break;
+                case 4:
+                    this.app.showScene(new EndScene(this.app));
+                    return;
             }
             ++this.eventIndex;
         }

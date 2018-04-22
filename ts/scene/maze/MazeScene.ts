@@ -1,6 +1,7 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
+/// <reference path="../end/EndScene.ts"/>
 
 class MazeScene implements Scene {
     app: Application;
@@ -193,6 +194,9 @@ class MazeScene implements Scene {
                 this.app.party.y = line[3];
                 this.drawMaze();
                 break;
+            case 4:
+                this.app.showScene(new EndScene(this.app));
+                return;
             }
             ++this.eventIndex;
         }
