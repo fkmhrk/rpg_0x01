@@ -47,6 +47,10 @@ class Character {
         }
     }
 
+    addItem(index: number) {
+        this.items.push(index);
+    }
+
     dropItem(index: number) {
         this.items.splice(index, 1);
     }

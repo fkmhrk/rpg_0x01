@@ -26,6 +26,7 @@ const mazeData = [
         events: {
             "0,6": 0,
             "0,0": 1,
+            "2,6": 2,
         },
         eventData: [
             [
@@ -35,6 +36,9 @@ const mazeData = [
                 [2, "Stairs down\n Take them?"],
                 [3, 1, 0, 0],
             ],
+            [
+                [5, [1]],
+            ],            
         ],
     },
     // floor 1

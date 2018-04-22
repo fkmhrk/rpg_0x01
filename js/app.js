@@ -27,6 +27,9 @@ class Character {
             this.hp = this.maxHp;
         }
     }
+    addItem(index) {
+        this.items.push(index);
+    }
     dropItem(index) {
         this.items.splice(index, 1);
     }
@@ -223,6 +226,7 @@ const mazeData = [
         events: {
             "0,6": 0,
             "0,0": 1,
+            "2,6": 2,
         },
         eventData: [
             [
@@ -231,6 +235,9 @@ const mazeData = [
             [
                 [2, "Stairs down\n Take them?"],
                 [3, 1, 0, 0],
+            ],
+            [
+                [5, [1]],
             ],
         ],
     },
@@ -818,6 +825,8 @@ const allItem = {
         name: 'Item 0x01',
         type: 1,
         value: 12,
+        buy: 10,
+        sell: 2,
     },
 };
 /// <reference path="./scene/Scene.ts"/>
@@ -951,6 +960,112 @@ class CampScene {
         }
         this.ractive.set({
             state: 2,
+        });
+        this.ractive.update();
+    }
+}
+/// <reference path="../Scene.ts"/>
+/// <reference path="../../Application.ts"/>
+/// <reference path="../maze/MazeScene.ts" />
+class ShopScene {
+    constructor(app, items) {
+        this.app = app;
+        this.items = items;
+    }
+    onCreate() {
+        this.app.getTemplate('shopTemplate').then((t) => {
+            this.ractive = new Ractive({
+                el: '#c',
+                template: t,
+                data: {
+                    allItem: allItem,
+                    gold: this.app.party.gold,
+                    msg: 'Hi!',
+                    p: null,
+                    state: 0,
+                    characters: this.app.party.characters,
+                }
+            });
+            this.ractive.on({
+                leave: () => {
+                    this.app.showScene(new MazeScene(this.app));
+                },
+                selectChar: (e, index) => {
+                    this.actionCharIndex = index;
+                    let char = this.app.party.characters[index];
+                    this.ractive.set({
+                        state: 1,
+                        msg: 'Welcome! ' + char.name,
+                        p: char,
+                    });
+                },
+                buy: () => {
+                    this.ractive.set({
+                        items: this.items,
+                        state: 2,
+                        msg: 'Which item would you buy?',
+                    });
+                },
+                sell: () => {
+                    this.ractive.set({
+                        items: this.items,
+                        state: 3,
+                        msg: 'Which item would you sell?',
+                    });
+                },
+                selectBuyItem: (e, index) => {
+                    this.buy(index);
+                },
+                selectSellItem: (e, index) => {
+                    this.sell(index);
+                },
+                back: (e, type) => {
+                    switch (type) {
+                        case 0:// to top
+                            this.ractive.set({
+                                state: 0,
+                                p: null,
+                                msg: 'Hi!',
+                            });
+                            break;
+                        case 1:// to buy/sell
+                            this.ractive.set({
+                                state: 1,
+                            });
+                            break;
+                    }
+                }
+            });
+        });
+    }
+    buy(index) {
+        let char = this.app.party.characters[this.actionCharIndex];
+        let item = allItem[this.items[index]];
+        if (this.app.party.gold < item.buy) {
+            this.ractive.set({
+                msg: "You don't have any gold..",
+            });
+        }
+        else {
+            this.app.party.gold -= item.buy;
+            char.addItem(this.items[index]);
+            this.ractive.set({
+                gold: this.app.party.gold,
+                state: 1,
+                msg: 'Thanks!',
+            });
+            this.ractive.update();
+        }
+    }
+    sell(index) {
+        let char = this.app.party.characters[this.actionCharIndex];
+        let item = allItem[this.items[index]];
+        char.dropItem(index);
+        this.app.party.gold += item.sell;
+        this.ractive.set({
+            gold: this.app.party.gold,
+            state: 1,
+            msg: 'Thanks!',
         });
         this.ractive.update();
     }
@@ -1319,6 +1434,7 @@ class EndScene {
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
 /// <reference path="../camp/CampScene.ts"/>
+/// <reference path="../shop/ShopScene.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
 /// <reference path="../end/EndScene.ts"/>
 class MazeScene {
@@ -1499,6 +1615,9 @@ class MazeScene {
                     break;
                 case 4:
                     this.app.showScene(new EndScene(this.app));
+                    return;
+                case 5:
+                    this.app.showScene(new ShopScene(this.app, line[1]));
                     return;
             }
             ++this.eventIndex;
