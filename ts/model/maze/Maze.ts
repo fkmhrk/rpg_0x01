@@ -5,6 +5,8 @@ class Maze {
     data: number[][];
     enemies: Character[];
     teams: number[][];
+    events: any;
+    eventData: any[];
 
     constructor() {
         this.data = [
@@ -41,6 +43,8 @@ class Maze {
             return Character.from(e);
         });
         this.teams = mazeData[floor].teams;
+        this.events = mazeData[floor].events;
+        this.eventData = mazeData[floor].eventData;
     }
 
     getWalls(x: number, y: number, d: number): Walls {
@@ -119,6 +123,15 @@ class Maze {
         return team.map((charIndex: number) => {
             return this.enemies[charIndex].copy();
         });
+    }
+
+    getEventIndex(x: number, y: number): number {
+        let n = this.events[x + "," + y];
+        return (n == null) ? -1 : n;
+    }
+
+    getEventData(index: number): any[] {
+        return this.eventData[index];
     }
 }
 
