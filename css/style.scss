@@ -3,6 +3,10 @@
     padding: 0;
 }
 
+body {
+    background-color: black;
+}
+
 .shake {
     animation: shake .3s;
 }
@@ -16,9 +20,10 @@
 }
 
 .titleScene {
-    h1 {
+    h1 {        
         text-align: center;
         font-size: 48px;
+        color: white;
     }
     .buttons {
         position: fixed;
@@ -41,6 +46,7 @@
     padding: 8px 8px;
     h1 {
         font-size: 36px;
+        color: white;
     }
     .form {
         input {
@@ -97,7 +103,47 @@
             width: 320px;
             margin-top: 8px;
         }
+        .camp {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+        }
     }
+}
+
+.campScene{ 
+    .title{ 
+        color: white;
+        text-align: center;
+        border: 2px solid white;
+        padding: 2px 4px;
+    }
+    .state {
+        color: white;
+        border: 2px solid white;
+        width: 320px;
+        margin: 4px auto;
+        .name {
+            text-align: left;
+        }
+        .val {
+            text-align: right;
+        }
+    }
+
+    .buttons {
+        width: 320px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 8px auto;
+        button {
+            width: 320px;
+            height: 44px;
+            margin-top: 8px;
+        }
+    }    
 }
 
 .battleScene {
