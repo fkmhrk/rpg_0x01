@@ -3,6 +3,8 @@ class Character {
         this.level = 1;
         this.xp = 0;
         this.nextXp = 0;
+        this.items = [];
+        this.spells = [];
     }
     static from(e) {
         let c = new Character();
@@ -25,6 +27,9 @@ class Character {
             this.hp = this.maxHp;
         }
     }
+    dropItem(index) {
+        this.items.splice(index, 1);
+    }
     copy() {
         let c = new Character();
         c.level = this.level;
@@ -38,6 +43,9 @@ class Character {
         c.xp = this.xp;
         c.nextXp = this.nextXp;
         c.image = this.image;
+        this.items.forEach((i) => {
+            c.items.push(i);
+        });
         return c;
     }
     update(c) {
@@ -249,7 +257,7 @@ const mazeData = [
                 img: 'e1.png',
             }],
         teams: [
-            [],
+            [0],
         ],
         events: {
             "0,0": 0,
@@ -805,10 +813,18 @@ class Walls {
         this.right2 = true;
     }
 }
+const allItem = {
+    1: {
+        name: 'Item 0x01',
+        type: 1,
+        value: 12,
+    },
+};
 /// <reference path="./scene/Scene.ts"/>
 /// <reference path="./ractive.d.ts"/>
 /// <reference path="./model/party/Party.ts"/>
 /// <reference path="./model/maze/Maze.ts"/>
+/// <reference path="./model/item/AllItem.ts"/>
 class Application {
     constructor() {
         this.party = new Party();
@@ -847,6 +863,7 @@ class CampScene {
                 el: '#c',
                 template: t,
                 data: {
+                    allItem: allItem,
                     p: null,
                     state: 0,
                     characters: this.app.party.characters,
@@ -857,26 +874,85 @@ class CampScene {
                     this.action = 1;
                     this.ractive.set({
                         state: 1,
+                        backAction: 0,
                     });
                 },
                 quit: () => {
                     this.app.showScene(new MazeScene(this.app));
                 },
                 selectChar: (e, index) => {
-                    this.actionCharIndex = index;
+                    switch (this.action) {
+                        case 1:// inspect
+                            this.actionCharIndex = index;
+                            this.ractive.set({
+                                state: 2,
+                                p: this.app.party.characters[index],
+                            });
+                            break;
+                        case 2:// item target
+                            this.execUseItem(index);
+                            break;
+                    }
+                },
+                chooseItem: () => {
                     this.ractive.set({
-                        state: 2,
-                        p: this.app.party.characters[index],
+                        state: 3,
                     });
                 },
-                back: () => {
+                selectItem: (e, index) => {
+                    this.useIndex = index;
                     this.ractive.set({
-                        state: 0,
-                        p: null,
+                        state: 4,
                     });
+                },
+                useItem: () => {
+                    this.useItemClicked();
+                },
+                back: (e, type) => {
+                    switch (type) {
+                        case 0:// to top
+                            this.ractive.set({
+                                state: 0,
+                                p: null,
+                            });
+                            break;
+                        case 1:// to inspect top
+                            this.ractive.set({
+                                state: 2,
+                            });
+                            break;
+                    }
                 }
             });
         });
+    }
+    useItemClicked() {
+        let char = this.app.party.characters[this.actionCharIndex];
+        let item = allItem[char.items[this.useIndex]];
+        switch (item.type) {
+            case 1:// heal HP
+                this.action = 2;
+                this.ractive.set({
+                    state: 1,
+                    backAction: 1,
+                });
+                break;
+        }
+    }
+    execUseItem(targetIndex) {
+        let char = this.app.party.characters[this.actionCharIndex];
+        let target = this.app.party.characters[targetIndex];
+        let item = allItem[char.items[this.useIndex]];
+        switch (item.type) {
+            case 1:// heal HP
+                target.addHp(item.value);
+                char.dropItem(this.useIndex);
+                break;
+        }
+        this.ractive.set({
+            state: 2,
+        });
+        this.ractive.update();
     }
 }
 /// <reference path="../../model/party/Party.ts" />

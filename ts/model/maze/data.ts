@@ -60,7 +60,7 @@ const mazeData = [
             img: 'e1.png',
         }],
         teams: [
-            [],
+            [0],
         ],
         events: {
             "0,0": 0,
