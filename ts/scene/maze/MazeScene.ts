@@ -1,6 +1,7 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
 /// <reference path="../camp/CampScene.ts"/>
+/// <reference path="../shop/ShopScene.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
 /// <reference path="../end/EndScene.ts"/>
 
@@ -204,6 +205,9 @@ class MazeScene implements Scene {
                 break;
             case 4:
                 this.app.showScene(new EndScene(this.app));
+                return;
+            case 5:
+                this.app.showScene(new ShopScene(this.app, line[1]));
                 return;
             }
             ++this.eventIndex;

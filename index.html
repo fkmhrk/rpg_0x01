@@ -120,6 +120,40 @@
         </section>
     </script>
 
+    <script id="shopTemplate" type="text/ractive">
+        <section class="shopScene">
+            <section style="text-align: center;"><span class="title">You have 0x{{gold.toString(16)}} Gold</span></section>
+            <pre class="msg">{{msg}}</pre>
+            <section class="buttons">
+                {{#if state == 0}}
+                    {{#characters:i}}
+                        <button on-click="['selectChar', i]">{{.name}}</button>
+                    {{/}}
+                    <button on-click="leave">Leave</button>
+                {{elseif state == 1}}
+                    {{#if p.items.length < 4}}
+                    <button on-click="buy">Buy</button>
+                    {{/if}}
+                    {{#if p.items.length > 0}}
+                    <button on-click="sell">Sell</button>
+                    {{/if}}
+                    <button on-click="['back', 0]">Leave</button>
+                {{elseif state == 2}}
+                    {{#items:i}}
+                    <button on-click="['selectBuyItem', i]">{{allItem[.].name}} 0x{{allItem[.].buy.toString(16)}}Gold</button>
+                    {{/}}
+                    <button on-click="['back', 1]">Back</button>
+                {{elseif state == 3}}
+                    {{#p.items:i}}
+                    <button on-click="['selectSellItem', i]">{{allItem[.].name}} 0x{{allItem[.].sell.toString(16)}}Gold</button>
+                    {{/}}
+                    <button on-click="['back', 1]">Back</button>
+                {{/if}}
+            </section>        
+        </section>
+
+    </script>
+
     <div id="battleTemplate" style="display: none;">
         <section class="battleScene">
             <section class="background">
