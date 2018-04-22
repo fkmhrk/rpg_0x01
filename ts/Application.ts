@@ -2,6 +2,7 @@
 /// <reference path="./ractive.d.ts"/>
 /// <reference path="./model/party/Party.ts"/>
 /// <reference path="./model/maze/Maze.ts"/>
+/// <reference path="./model/item/AllItem.ts"/>
 
 class Application {
     scene: Scene;

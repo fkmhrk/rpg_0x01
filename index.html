@@ -101,11 +101,20 @@
                     {{#characters:i}}
                     <button on-click="['selectChar', i]">{{.name}}</button>
                     {{/}}
-                    <button on-click="back">Back</button>
+                    <button on-click="['back', backAction]">Back</button>
                 {{elseif state == 2}}
-                    <button on-click="selectItem">Select Item</button>
+                    <button on-click="chooseItem">Select Item</button>
                     <button on-click="castSpell">Cast Spell</button>
-                    <button on-click="back">Back</button>
+                    <button on-click="['back', 0]">Back</button>
+                {{elseif state == 3}}
+                    {{#p.items:i}}
+                    <button on-click="['selectItem', i]">{{allItem[.].name}}</button>
+                    {{/}}
+                    <button on-click="['back', 1]">Back</button>
+                {{elseif state == 4}}
+                    <button on-click="useItem">Use</button>
+                    <button on-click="tradeItem">Trade</button>
+                    <button on-click="['back', 1]">Back</button>                    
                 {{/if}}
             </section>
         </section>

@@ -12,12 +12,17 @@ class Character {
     xp: number;
     nextXp: number;
 
+    items: number[];
+    spells: number[];
+
     image?: string;
 
     constructor() {
         this.level = 1;
         this.xp = 0;
         this.nextXp = 0;
+        this.items = [];
+        this.spells = [];
     }
 
     static from(e: any): Character {
@@ -42,6 +47,10 @@ class Character {
         }
     }
 
+    dropItem(index: number) {
+        this.items.splice(index, 1);
+    }
+
     copy(): Character {
         let c = new Character();
         c.level = this.level;
@@ -55,6 +64,9 @@ class Character {
         c.xp = this.xp;
         c.nextXp = this.nextXp;
         c.image = this.image;
+        this.items.forEach((i: number) => {
+            c.items.push(i);
+        })
         return c;
     }
 
