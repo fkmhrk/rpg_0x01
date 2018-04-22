@@ -30,7 +30,6 @@ const mazeData = [
         eventData: [
             [
                 [1, "Welcome!"],
-                [4],
             ],
             [
                 [2, "Stairs down\n Take them?"],
@@ -461,6 +460,7 @@ const mazeData = [
         events: {
             "7,3": 0,
             "9,7": 1,
+            "7,5": 2,
         },
         eventData: [
             [
@@ -470,6 +470,10 @@ const mazeData = [
             [
                 [2, "Stairs up\n Take them?"],
                 [3, 8, 9, 7],
+            ],
+            [
+                [1, "You found the treasure 0x01!"],
+                [4],
             ],
         ],
     },      
