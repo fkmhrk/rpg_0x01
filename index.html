@@ -41,7 +41,9 @@
     <div id="mazeTemplate" style="display: none;">
         <section class="mazeScene">
             <canvas id="maze" width="320" height="320"></canvas>
+            {{#if isEmpty(msg)}}{{else}}
             <pre id="msg" class="msg">{{msg}}</pre>
+            {{/if}}
 
             <section class="buttons">
             {{#if buttonState == 0}}
@@ -50,6 +52,7 @@
                     <tr><td><button on-click="left">Left</button></td><td></td><td><button on-click="right">Right</button></td></tr>
                     <tr><td></td><td><button on-click="back">Back</button></td><td></td></tr>
                 </table>
+                <button class="camp" on-click="camp">Camp</button>
             {{elseif buttonState == 1}}
             <button class="ok" on-click="ok">OK</button>
             {{elseif buttonState == 2}}
@@ -59,6 +62,54 @@
             </section>
         </section>
     </div>        
+
+    <script id="campTemplate" type="text/ractive">
+        <section class="campScene">
+            <section style="text-align: center;"><span class="title">Camp</span></section>
+            {{#if p == null}}
+            <table class="state">
+                <thead>
+                    <tr><th>NAME</th><th class="val">HP</th><th class="val">MP</th></tr>
+                </thead>
+                <tbody>
+                {{#characters:i}}
+                <tr>
+                    <th class="name">{{.name}}</th>
+                    <td class="val">0x{{.hp.toString(16)}}</td>
+                    <td class="val">0x{{.mp.toString(16)}}</td>
+                </tr>
+                {{/}}
+                </tbody>
+            </table> 
+            {{else}}
+            <table class="state">
+                <tr><th>{{p.name}}</th></tr>
+                <tr><th>Level</th><td class="val">0x{{p.level.toString(16)}}</td></tr>
+                <tr><th>HP</th><td class="val">0x{{p.hp.toString(16)}} / 0x{{p.maxHp.toString(16)}}</td></tr>
+                <tr><th>HP</th><td class="val">0x{{p.mp.toString(16)}} / 0x{{p.maxMp.toString(16)}}</td></tr>
+                <tr><th>EXP</th><td class="val">0x{{p.xp.toString(16)}}</td></tr>
+                <tr><th>Attack</th><td class="val">0x{{p.attack.toString(16)}}</td></tr>
+                <tr><th>Defence</th><td class="val">0x{{p.defence.toString(16)}}</td></tr>
+            </table>
+            {{/if}}
+            
+            <section class="buttons">
+                {{#if state == 0}}
+                    <button on-click="inspect">Inspect</button>
+                    <button on-click="quit">Quit Camp</button>
+                {{elseif state == 1}}
+                    {{#characters:i}}
+                    <button on-click="['selectChar', i]">{{.name}}</button>
+                    {{/}}
+                    <button on-click="back">Back</button>
+                {{elseif state == 2}}
+                    <button on-click="selectItem">Select Item</button>
+                    <button on-click="castSpell">Cast Spell</button>
+                    <button on-click="back">Back</button>
+                {{/if}}
+            </section>
+        </section>
+    </script>
 
     <div id="battleTemplate" style="display: none;">
         <section class="battleScene">

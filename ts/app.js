@@ -834,6 +834,51 @@ class Application {
         return this.maze.getWalls(this.party.x, this.party.y, this.party.direction);
     }
 }
+/// <reference path="../Scene.ts"/>
+/// <reference path="../../Application.ts"/>
+/// <reference path="../maze/MazeScene.ts" />
+class CampScene {
+    constructor(app) {
+        this.app = app;
+    }
+    onCreate() {
+        this.app.getTemplate('campTemplate').then((t) => {
+            this.ractive = new Ractive({
+                el: '#c',
+                template: t,
+                data: {
+                    p: null,
+                    state: 0,
+                    characters: this.app.party.characters,
+                }
+            });
+            this.ractive.on({
+                inspect: () => {
+                    this.action = 1;
+                    this.ractive.set({
+                        state: 1,
+                    });
+                },
+                quit: () => {
+                    this.app.showScene(new MazeScene(this.app));
+                },
+                selectChar: (e, index) => {
+                    this.actionCharIndex = index;
+                    this.ractive.set({
+                        state: 2,
+                        p: this.app.party.characters[index],
+                    });
+                },
+                back: () => {
+                    this.ractive.set({
+                        state: 0,
+                        p: null,
+                    });
+                }
+            });
+        });
+    }
+}
 /// <reference path="../../model/party/Party.ts" />
 const STATE_PARTY_COMMAND = 1;
 const STATE_DO_FIRST_CHARACTER = 2;
@@ -1197,6 +1242,7 @@ class EndScene {
 }
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../camp/CampScene.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
 /// <reference path="../end/EndScene.ts"/>
 class MazeScene {
@@ -1211,7 +1257,11 @@ class MazeScene {
                 el: '#c',
                 template: t,
                 data: {
+                    msg: '',
                     buttonState: 0,
+                    isEmpty: (v) => {
+                        return v.length == 0;
+                    },
                 }
             });
             this.ractive.on({
@@ -1229,6 +1279,9 @@ class MazeScene {
                 back: () => {
                     this.app.party.turnBack();
                     this.drawMaze();
+                },
+                camp: () => {
+                    this.app.showScene(new CampScene(this.app));
                 },
                 ok: () => {
                     this.ractive.set({

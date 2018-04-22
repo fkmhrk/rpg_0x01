@@ -1,5 +1,6 @@
 /// <reference path="../Scene.ts"/>
 /// <reference path="../../Application.ts"/>
+/// <reference path="../camp/CampScene.ts"/>
 /// <reference path="../battle/BattleScene.ts"/>
 /// <reference path="../end/EndScene.ts"/>
 
@@ -27,7 +28,11 @@ class MazeScene implements Scene {
                 el: '#c',
                 template: t,
                 data: {
+                    msg: '',
                     buttonState: 0,
+                    isEmpty: (v: string) => {
+                        return v.length == 0;
+                    },
                 }
             });
             this.ractive.on({
@@ -45,6 +50,9 @@ class MazeScene implements Scene {
                 back: () => {
                     this.app.party.turnBack();
                     this.drawMaze();
+                },
+                camp: () => {
+                    this.app.showScene(new CampScene(this.app));
                 },
                 ok: () => {
                     this.ractive.set({
