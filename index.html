@@ -48,9 +48,9 @@
             <section class="buttons">
             {{#if buttonState == 0}}
                 <table class="move">
-                    <tr><td></td><td><button on-click="go">Go</button></td><td></td></tr>
-                    <tr><td><button on-click="left">Left</button></td><td></td><td><button on-click="right">Right</button></td></tr>
-                    <tr><td></td><td><button on-click="back">Back</button></td><td></td></tr>
+                    <tr><td on-click="prevent"></td><td><button on-click="go">Go</button></td><td on-click="prevent"></td></tr>
+                    <tr><td><button on-click="left">Left</button></td><td on-click="prevent"></td><td><button on-click="right">Right</button></td></tr>
+                    <tr><td on-click="prevent"></td><td><button on-click="back">Back</button></td><td on-click="prevent"></td></tr>
                 </table>
                 <button class="camp" on-click="camp">Camp</button>
             {{elseif buttonState == 1}}

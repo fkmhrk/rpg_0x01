@@ -37,6 +37,9 @@ class MazeScene implements Scene {
                 }
             });
             this.ractive.on({
+                prevent: () => {
+                    return false;
+                },
                 go: () => {
                     this.go();
                 },

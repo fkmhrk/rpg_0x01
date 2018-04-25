@@ -1457,6 +1457,9 @@ class MazeScene {
                 }
             });
             this.ractive.on({
+                prevent: () => {
+                    return false;
+                },
                 go: () => {
                     this.go();
                 },
