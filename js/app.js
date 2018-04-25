@@ -1462,18 +1462,22 @@ class MazeScene {
                 },
                 go: () => {
                     this.go();
+                    return false;
                 },
                 left: () => {
                     this.app.party.turnLeft();
                     this.drawMaze();
+                    return false;
                 },
                 right: () => {
                     this.app.party.turnRight();
                     this.drawMaze();
+                    return false;
                 },
                 back: () => {
                     this.app.party.turnBack();
                     this.drawMaze();
+                    return false;
                 },
                 camp: () => {
                     this.app.showScene(new CampScene(this.app));
